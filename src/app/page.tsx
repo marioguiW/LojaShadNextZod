@@ -1,12 +1,13 @@
 'use client'
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { authService } from "@/services/authService";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import Cookie from 'js-cookie'
 
 const loginFormSchema = z.object({
   email: z.string().nonempty("O campo de email é obrigatório"),
@@ -26,27 +27,19 @@ export default function Home() {
 
   async function login(data : any){
     setOutput(JSON.stringify(data, null, 2))
+    const login = await authService.login(data)
+    // console.log(login)
+    if(login?.status == 200){
+      Cookie.set('ACCESS_TOKEN', login.body.user.accessToken)
+      Cookie.set('REFRESH_TOKEN', login.body.user.refreshToken)
 
-    console.log("data =>", data)
+      router.replace('/dashboard')
 
-    const result = await signIn("credentials", {
-      email: data.email,
-      password: data.password,
-      redirect: false
-    })
-
-    console.log("result", result)
-
-    if(result?.error){
-      console.log(result)
-      return
     }
-
-    router.replace("/dashboard")
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-24">
+    <main className="flex min-h-screen flex-col items-center p-24 bg-zinc-700">
       <form onSubmit={handleSubmit(login)} className="p-6 rounded bg-slate-800 text-white flex flex-col gap-5 max-w-sm w-full">
         <div className="flex flex-col gap-1">
           <label htmlFor="">E-mail</label>
