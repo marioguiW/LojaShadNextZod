@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +19,19 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body className={inter.className}>
+        <header className="flex">
+          <nav className="flex justify-between m-auto w-[80%]">
+            <div>Logo</div>
+            <div>
+              <ul className="flex gap-20">
+                <li>link2</li>
+                <li>link3</li>
+                <li>link4</li>
+              </ul>
+            </div>
+          </nav>
+          <Link href="/logout">Logout</Link>
+        </header>
           {children}
       </body>
     </html>

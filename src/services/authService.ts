@@ -1,3 +1,4 @@
+import axios from "axios"
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies"
 
 type loginType = {
@@ -10,14 +11,12 @@ type Tokens = {
     refreshToken: string
 }
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";  // Desabilitar a rejeição de certificados não autorizados
-
 
 export const authService = {
 
     async login(loginData: loginType) {
         try {
-            return await fetch("https://localhost:7148/v1/login", {
+            return await fetch("http://localhost:5193/v1/login", {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
@@ -46,32 +45,67 @@ export const authService = {
                 }
             })
         } catch (error) {
-            // console.log(error)
+            console.log(error)
         }
     },
     async getSession(accessToken: string | RequestCookie | undefined) {
         try {
-            return await fetch(`http://localhost:3000/v1/session?accessToken=${accessToken}`, {
-                method: "POST",
+            console.log("testando");
+    
+            const response = await fetch(`http://localhost:5193/v1/session?accessToken=${accessToken}`, {
                 headers: {
                     "Content-Type": "application/json"
                 },
             });
+    
+            if (response.ok) {
+                const body = {
+                    ok: response.ok,
+                    status: response.status,
+                    body: await response.text()
+                };
+                return body;
+            } else {
+                const errorText = await response.text(); // Read the response as text
+                const body = {
+                    ok: response.ok,
+                    status: response.status,
+                    error: errorText // Include the error text in the response
+                };
+                return body;
+            }
         } catch (error) {
-            // console.error("getSession[ERROR]", error)
+            console.error("getSession[ERROR]", error);
         }
     },
     async refresh(tokens: any) {
         try {
-            return await fetch('http://localhost:3000/api/refresh', {
+            const response = await fetch('http://localhost:5193/v1/refresh', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(tokens),
             });
+
+            if (response.ok) {
+                const body = {
+                    ok: response.ok,
+                    status: response.status,
+                    body: await response.json()
+                };
+                return body;
+            } else {
+                const errorText = await response.text(); // Read the response as text
+                const body = {
+                    ok: response.ok,
+                    status: response.status,
+                    error: errorText // Include the error text in the response
+                };
+                return body;
+            }
         } catch (error) {
-            // console.error("Refresh[ERROR]", error);
+            console.error("Refresh[ERROR]", error);
         }
     }
 }

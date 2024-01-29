@@ -28,7 +28,7 @@ export default function Home() {
   async function login(data : any){
     setOutput(JSON.stringify(data, null, 2))
     const login = await authService.login(data)
-    // console.log(login)
+    console.log(login)
     if(login?.status == 200){
       Cookie.set('ACCESS_TOKEN', login.body.user.accessToken)
       Cookie.set('REFRESH_TOKEN', login.body.user.refreshToken)
