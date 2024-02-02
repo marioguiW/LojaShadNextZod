@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Cookie from 'js-cookie'
+import { ButtonLoading } from "@/components/ButtonLoading";
 
 const loginFormSchema = z.object({
   email: z.string().nonempty("O campo de email é obrigatório"),
@@ -19,6 +20,8 @@ type LoginFormData = z.infer<typeof loginFormSchema>
 
 export default function Home() {
 
+  const [isLoading, setIsLoading] = useState(false)
+  const [erroAuth, setErroAuth] = useState(false)
   const [output, setOutput] = useState('')
   const router = useRouter()
   const {register, handleSubmit,formState: {errors}, control} = useForm<LoginFormData>({
@@ -26,6 +29,7 @@ export default function Home() {
   })
 
   async function login(data : any){
+    setIsLoading(true)
     setOutput(JSON.stringify(data, null, 2))
     const login = await authService.login(data)
     console.log(login)
@@ -34,13 +38,15 @@ export default function Home() {
       Cookie.set('REFRESH_TOKEN', login.body.user.refreshToken)
 
       router.replace('/dashboard')
-
+    }else{
+      setIsLoading(false)
+      setErroAuth(true)
     }
   }
 
   return (
     <main className="flex min-h-screen flex-col items-center p-24 bg-zinc-700">
-      <form onSubmit={handleSubmit(login)} className="p-6 rounded bg-slate-800 text-white flex flex-col gap-5 max-w-sm w-full">
+      <form onSubmit={handleSubmit(login)} onFocus={()=>setErroAuth(false)} className="p-6 rounded bg-slate-800 text-white flex flex-col gap-5 max-w-sm w-full">
         <div className="flex flex-col gap-1">
           <label htmlFor="">E-mail</label>
           <input {...register('email')} className="rounded bg-zinc-400 text-black border-s-zinc-700 p-2" type="text" />
@@ -62,7 +68,8 @@ export default function Home() {
             </label>
           </div>
         </div>
-        <Button>Entrar</Button>
+        {erroAuth ? <h6 className="text-red-500">E-mail ou senha inválidos</h6> : null}
+        {isLoading ? <ButtonLoading/> : <Button type="submit" >Entrar</Button>}
       </form>
       <pre>
         {output}

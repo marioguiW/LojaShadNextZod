@@ -12,12 +12,14 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ReactNode } from "react"
+import { ReactNode, useState } from "react"
 import DialogDemo from "@/components/Dialog"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { updateProduct } from "@/services/produtos"
+import Formulario from "@/components/FormularioProdutos"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -87,6 +89,9 @@ export const columns: ColumnDef<Payment>[] = [
     {
         id: "actions",
         cell: ({ row }) => {
+
+            const [open, setOpen] = useState(false)
+            
             const payment = row.original
 
             return (
@@ -120,54 +125,7 @@ export const columns: ColumnDef<Payment>[] = [
                                     Make changes to your profile here. Click save when you're done.
                                 </DialogDescription>
                             </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="titulo" className="text-right">
-                                        Titulo
-                                    </Label>
-                                    <Input id="titulo" value={payment.titulo} className="col-span-3" />
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="categoria" className="text-right">
-                                        Categoria
-                                    </Label>
-                                    <Input id="categoria" value={payment.categoria} className="col-span-3" />
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="uniMedida" className="text-right">
-                                        Uni. Medida
-                                    </Label>
-                                    <Select>
-                                        <SelectTrigger className="col-span-3">
-                                            <SelectValue placeholder="Selecione a unidade" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectLabel>Unidade de Medida</SelectLabel>
-                                                <SelectItem value="apple">Grama</SelectItem>
-                                                <SelectItem value="banana">Quilograma</SelectItem>
-                                                <SelectItem value="blueberry">Litro</SelectItem>
-                                                <SelectItem value="grapes">Mililitro</SelectItem>
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="categoria" className="text-right">
-                                        Categoria
-                                    </Label>
-                                    <Input id="categoria" value={payment.categoria} className="col-span-3" />
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="categoria" className="text-right">
-                                        Categoria
-                                    </Label>
-                                    <Input id="categoria" value={payment.categoria} className="col-span-3" />
-                                </div>
-                            </div>
-                            <DialogFooter>
-                                <Button type="submit">Save changes</Button>
-                            </DialogFooter>
+                            <Formulario setOpen={setOpen} estilo=''/>
                         </DialogContent>
                     </DropdownMenu>
                 </Dialog>
