@@ -15,16 +15,8 @@ import {
 } from "@/components/ui/form"
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import Link from "next/link";
-import { ChangeEvent, useEffect, useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import { cn } from "@/lib/utils"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
-import axios from "axios";
 import { NumericFormat, PatternFormat } from 'react-number-format';
-import NumberFormat from 'react-number-format';
-import { DialogClose, DialogTrigger } from "@/components/ui/dialog";
+
 
 
 const formSchema = z.object({
@@ -48,10 +40,19 @@ const formSchema = z.object({
 type FormularioProps = {
     setOpen: (boolean: boolean) => void,
     estilo: string
+    data: {
+        id: string,
+        titulo: string,
+        categoria: string,
+        unidadeMedida: string,
+        quantidade: string,
+        preco: string,
+    }
 }
 
-export default function Formulario({ setOpen, estilo }: FormularioProps) {
+export default function Formulario({ setOpen, estilo, data }: FormularioProps) {
     function onSubmit(values: z.infer<typeof formSchema>) {
+        console.log('id:', data.id)
         console.log(values)
         setOpen(false)
         console.log("teste")
@@ -59,14 +60,20 @@ export default function Formulario({ setOpen, estilo }: FormularioProps) {
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
+        defaultValues: {
+            titulo: data.titulo,
+            categoria: data.categoria,
+            unidadeMedida: data.unidadeMedida,
+            quantidade: data.quantidade,
+            preco: data.preco
+        }
     })
-
+ 
 
     return (
         <div className={`flex items-center  w-full ${estilo}`}>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="w-full rounded space-y-4">
-
                     <FormField
                         control={form.control}
                         name="titulo"
@@ -104,10 +111,10 @@ export default function Formulario({ setOpen, estilo }: FormularioProps) {
                     />
                     <FormField
                         control={form.control}
-                        name="unidadeMedida"
+                        name="quantidade"
                         render={({ field: { ref, ...rest } }) => (
                             <FormItem className="w-full flex flex-col">
-                                <FormLabel className="text-black">Unidade de Medida</FormLabel>
+                                <FormLabel className="text-black">Quantidade</FormLabel>
                                 <FormControl>
                                     {/* mateus */}
                                     <PatternFormat
@@ -133,6 +140,7 @@ export default function Formulario({ setOpen, estilo }: FormularioProps) {
                                 <FormControl>
                                     {/* mateus */}
                                     <NumericFormat
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                         thousandSeparator=","
                                         decimalSeparator="."
                                         prefix="$ "
@@ -148,22 +156,21 @@ export default function Formulario({ setOpen, estilo }: FormularioProps) {
                     />
                     <FormField
                         control={form.control}
-                        name="quantidade"
-                        render={({ field: { ref, ...rest } }) => (
+                        name="unidadeMedida"
+                        render={({ field }) => (
                             <FormItem className="w-full flex flex-col">
-                                <FormLabel className="text-black">Quantidade</FormLabel>
+                                <FormLabel className="text-black">Unidade de Medida</FormLabel>
                                 <FormControl>
-                                    <Select>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <SelectTrigger className="col-span-3">
                                             <SelectValue placeholder="Selecione a unidade" />
                                         </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
+                                        <SelectContent >
+                                            <SelectGroup >
                                                 <SelectLabel>Unidade de Medida</SelectLabel>
-                                                <SelectItem value="apple">Grama</SelectItem>
-                                                <SelectItem value="banana">Quilograma</SelectItem>
-                                                <SelectItem value="blueberry">Litro</SelectItem>
-                                                <SelectItem value="grapes">Mililitro</SelectItem>
+                                                <SelectItem value="Grama">Grama</SelectItem>
+                                                <SelectItem value="Mililitro">Mililitro</SelectItem>
+                                                <SelectItem value="Unidade">Unidade</SelectItem>
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>

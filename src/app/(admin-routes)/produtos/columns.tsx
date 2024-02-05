@@ -1,7 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
+import { MoreHorizontal, NavigationOff } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -27,9 +27,9 @@ export type Payment = {
     id: string
     titulo: string
     categoria: string
-    preco: number
+    preco: string
     unidadeMedida: string
-    quantidade: number
+    quantidade: string
 }
 
 export const columns: ColumnDef<Payment>[] = [
@@ -92,7 +92,11 @@ export const columns: ColumnDef<Payment>[] = [
 
             const [open, setOpen] = useState(false)
             
+            
+            row.original.categoria = `legalzao`
             const payment = row.original
+
+            console.log(payment)
 
             return (
                 <Dialog>
@@ -106,7 +110,9 @@ export const columns: ColumnDef<Payment>[] = [
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(payment.id)}
+                                onClick={() => {
+                                    return navigator.clipboard.writeText(payment.id)
+                                }}
                             >
                                 Copy payment ID
                             </DropdownMenuItem>
@@ -125,7 +131,7 @@ export const columns: ColumnDef<Payment>[] = [
                                     Make changes to your profile here. Click save when you're done.
                                 </DialogDescription>
                             </DialogHeader>
-                            <Formulario setOpen={setOpen} estilo=''/>
+                            <Formulario setOpen={setOpen} estilo='' data={payment}/>
                         </DialogContent>
                     </DropdownMenu>
                 </Dialog>

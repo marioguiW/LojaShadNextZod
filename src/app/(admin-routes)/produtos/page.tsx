@@ -1,19 +1,22 @@
 import axios from "axios";
 import { Payment, columns } from "./columns"
 import { DataTable } from "./data-table"
+import { useState } from "react";
+
+
 
 async function getData(): Promise<Payment[]> {
-
-
     const response = await axios.get("http://localhost:5193/produto/produtos");
 
     console.log(response)
 
     return response.data
 
+
 }
 
 export default async function DemoPage() {
+
   const data = await getData()
 
   return (
