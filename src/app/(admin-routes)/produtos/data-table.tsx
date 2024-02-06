@@ -15,22 +15,26 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { useState } from "react"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
-    data: TData[]
+    dado: TData[]
 }
 
 export function DataTable<TData, TValue>({
     columns,
-    data,
+    dado,
 }: DataTableProps<TData, TValue>) {
+
+    const [data, setDados] = useState(dado)
+
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
     })
-
+    
     return (
         <div className="rounded-md border">
             <Table>
@@ -45,7 +49,7 @@ export function DataTable<TData, TValue>({
                                             : flexRender(
                                                 header.column.columnDef.header,
                                                 header.getContext()
-                                            )}
+                                        )}
                                     </TableHead>
                                 )
                             })}
@@ -75,6 +79,7 @@ export function DataTable<TData, TValue>({
                     )}
                 </TableBody>
             </Table>
+            <button onClick={()=> table.reset()}></button>
         </div>
     )
 }

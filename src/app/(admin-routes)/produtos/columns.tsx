@@ -32,6 +32,8 @@ export type Payment = {
     quantidade: string
 }
 
+
+
 export const columns: ColumnDef<Payment>[] = [
     {
         accessorKey: "id",
@@ -94,9 +96,14 @@ export const columns: ColumnDef<Payment>[] = [
             
             
             row.original.categoria = `legalzao`
-            const payment = row.original
+            const [payment, setPayment] = useState(row.original)
 
-            console.log(payment)
+            function onFormSubmit(info : any){
+                
+            }
+
+
+            console.log("payment", payment)
 
             return (
                 <Dialog>
@@ -131,7 +138,7 @@ export const columns: ColumnDef<Payment>[] = [
                                     Make changes to your profile here. Click save when you're done.
                                 </DialogDescription>
                             </DialogHeader>
-                            <Formulario setOpen={setOpen} estilo='' data={payment}/>
+                            <Formulario setOpen={setOpen} estilo='' data={payment} />
                         </DialogContent>
                     </DropdownMenu>
                 </Dialog>

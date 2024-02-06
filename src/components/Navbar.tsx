@@ -11,10 +11,10 @@ export default function Navbar() {
         <div>
           <ul className="flex gap-20 text-lg">
             <li>
-              <Link href='/produtos' className="text-white hover:duration-75 hover:underline	">Produtos</Link>
+              <Link href='/produtos' className="text-white hover:underline	">Produtos</Link>
             </li>
             <li>
-              <Link href='/produtos' className="text-white hover:underline">Produtos</Link>
+              <Link href='/clientes' className="text-white hover:underline">Clientes</Link>
             </li>
             <li>
               <Link href='/produtos' className="text-white hover:underline">Produtos</Link>

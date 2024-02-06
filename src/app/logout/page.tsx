@@ -12,7 +12,6 @@ export default function Logout(){
         // Função assíncrona dentro do useEffect
         (async ()=>{
             try {
-                console.log("passou por aqui")
                 Cookie.remove('ACCESS_TOKEN')
                 Cookie.remove('REFRESH_TOKEN')
                 router.push("/");

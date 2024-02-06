@@ -16,6 +16,8 @@ import {
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NumericFormat, PatternFormat } from 'react-number-format';
+import { Dispatch, SetStateAction } from "react";
+import { Payment } from "@/app/(admin-routes)/produtos/columns";
 
 
 
@@ -47,11 +49,12 @@ type FormularioProps = {
         unidadeMedida: string,
         quantidade: string,
         preco: string,
-    }
+    },
 }
 
-export default function Formulario({ setOpen, estilo, data }: FormularioProps) {
+export default function Formulario({ setOpen, estilo, data}: FormularioProps) {
     function onSubmit(values: z.infer<typeof formSchema>) {
+        console.log("submitou")
         console.log('id:', data.id)
         console.log(values)
         setOpen(false)
@@ -90,20 +93,11 @@ export default function Formulario({ setOpen, estilo, data }: FormularioProps) {
                     <FormField
                         control={form.control}
                         name="categoria"
-                        render={({ field: { ref, ...rest } }) => (
+                        render={({ field }) => (
                             <FormItem className="w-full flex flex-col">
                                 <FormLabel className="text-black">Categoria</FormLabel>
                                 <FormControl>
-                                    {/* mateus */}
-                                    <PatternFormat
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        placeholder="23.456.789/0001-12"
-                                        format="##.###.###/####-##"
-                                        allowEmptyFormatting
-                                        mask={'_'}
-                                        getInputRef={ref}
-                                        {...rest}
-                                    />
+                                    <Input className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" placeholder="Categoria" {...field} />
                                 </FormControl>
                                 <FormMessage className="text-[10px]" />
                             </FormItem>
@@ -112,20 +106,12 @@ export default function Formulario({ setOpen, estilo, data }: FormularioProps) {
                     <FormField
                         control={form.control}
                         name="quantidade"
-                        render={({ field: { ref, ...rest } }) => (
+                        render={({ field }) => (
                             <FormItem className="w-full flex flex-col">
                                 <FormLabel className="text-black">Quantidade</FormLabel>
                                 <FormControl>
                                     {/* mateus */}
-                                    <PatternFormat
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        placeholder="(00) 0 0000-0000"
-                                        format="(##) # ####-####"
-                                        allowEmptyFormatting
-                                        mask={'_'}
-                                        getInputRef={ref}
-                                        {...rest}
-                                    />
+                                   <Input type="number" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"  {...field}  />
                                 </FormControl>
                                 <FormMessage className="text-[10px]" />
                             </FormItem>
@@ -141,14 +127,12 @@ export default function Formulario({ setOpen, estilo, data }: FormularioProps) {
                                     {/* mateus */}
                                     <NumericFormat
                                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        thousandSeparator=","
-                                        decimalSeparator="."
+                                        thousandSeparator="."
+                                        decimalSeparator=","
                                         prefix="$ "
                                         decimalScale={2}
                                         {...rest}
                                     />
-
-
                                 </FormControl>
                                 <FormMessage className="text-[10px]" />
                             </FormItem>
