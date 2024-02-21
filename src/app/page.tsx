@@ -23,15 +23,14 @@ export default function Home() {
 
   const [isLoading, setIsLoading] = useState(false)
   const [erroAuth, setErroAuth] = useState(false)
-  const [output, setOutput] = useState('')
   const router = useRouter()
   const { register, handleSubmit, formState: { errors }, control } = useForm<LoginFormData>({
     resolver: zodResolver(loginFormSchema)
   })
 
-  async function login(data: any) {
+  async function login(data: LoginFormData) {
+    console.log(data)
     setIsLoading(true)
-    setOutput(JSON.stringify(data, null, 2))
     const login = await authService.login(data)
     console.log(login)
     if (login?.status == 200) {
@@ -80,9 +79,7 @@ export default function Home() {
           </Button>
         </div>
       </form>
-      <pre>
-        {output}
-      </pre>
+
     </main>
   );
 }

@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { ButtonLoading } from "@/components/ButtonLoading"
 import { Checkbox } from "@/components/ui/checkbox"
 
@@ -39,6 +39,7 @@ const LoginFormSchema = z.object({
   estado: z.string(),
   cidade: z.string(),
   rua: z.string(),
+  numero: z.string(),
   bairro: z.string(),
 }).refine(
   (values) => {
@@ -53,8 +54,7 @@ const LoginFormSchema = z.object({
 export default function SelectForm() {
 
   const [isLoading, setIsLoading] = useState(false);
-  const [erroAuth, setErroAuth] = useState(false);
-
+  const [erroAuth, setErroAuth] = useState();
 
   const abreviacoesEstados = [
     'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
@@ -88,12 +88,29 @@ export default function SelectForm() {
     fetchData();
   }, [form.watch('cep')]);
 
-  function onSubmit(data: z.infer<typeof LoginFormSchema>) {
+  async function onSubmit(data: z.infer<typeof LoginFormSchema>) {
     setIsLoading(true)
-    
-    const response = axios.post('http://localhost:5193/v1/cliente/clientes', {
-      
-    })
+
+    console.log(data)
+    try{
+      const response = await axios.post('http://localhost:5193/cliente/clientes', {
+        Nome : data.nome,
+        Email : data.email,
+        Senha: data.password,
+        Endereco: {
+            Cep: parseInt(data.cep),
+            Logradouro: data.rua,
+            Numero: parseInt(data.numero),
+            Bairro: data.bairro,
+            Cidade: data.cidade
+        },
+      })
+    }catch(error : any){
+      console.log(error.response.status)
+      setErroAuth(error.response.status)
+    }
+
+    setIsLoading(false)
 
   }
 
@@ -217,17 +234,31 @@ export default function SelectForm() {
                   </div>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="rua"
-                render={({ field }) => (
-                  <div className="flex flex-col gap-1 w-full">
-                    <FormLabel>Rua</FormLabel>
-                    <Input {...field} className="rounded bg-zinc-400 text-black border-s-zinc-700 p-2 w-full" />
-                    <FormMessage />
-                  </div>
-                )}
-              />
+              <div className="flex gap-3">
+                <FormField
+                  control={form.control}
+                  name="rua"
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-1 w-full">
+                      <FormLabel>Rua</FormLabel>
+                      <Input {...field} className="rounded bg-zinc-400 text-black border-s-zinc-700 p-2 w-full" />
+                      <FormMessage />
+                    </div>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="numero"
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-1 w-[25%]">
+                      <FormLabel>Numero</FormLabel>
+                      <Input {...field} className="rounded bg-zinc-400 text-black border-s-zinc-700 p-2 w-full" />
+                      <FormMessage />
+                    </div>
+                  )}
+                />
+
+              </div>
             </div>
           </div>
           <div className="items-top flex space-x-2">
@@ -244,7 +275,7 @@ export default function SelectForm() {
 
 
 
-          {erroAuth ? <h6 className="text-red-500">Credenciais incorretas</h6> : null}
+          {erroAuth == 409 ? <h6 className="text-red-500">Email já está em uso</h6> : null}
 
           <div className="flex items-center justify-center">
             {isLoading ? <ButtonLoading /> : <Button className="w-[50%] bg-emerald-500 hover:bg-emerald-600" type="submit">Criar conta</Button>}

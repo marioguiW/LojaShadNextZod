@@ -93,15 +93,11 @@ export const columns: ColumnDef<Payment>[] = [
         cell: ({ row }) => {
 
             const [open, setOpen] = useState(false)
-            
-            
-            row.original.categoria = `legalzao`
             const [payment, setPayment] = useState(row.original)
 
             function onFormSubmit(info : any){
                 
             }
-
 
             console.log("payment", payment)
 
