@@ -1,29 +1,29 @@
 import axios from "axios";
-import { Payment, columns } from "./columns"
 import { DataTable } from "./data-table"
-import { useState } from "react";
+import { ProdutosProvider } from "@/context/ProdutosContext";
+import { CadastrarProduto } from "@/components/CadastrarProduto";
+import { ProductType } from "@/services/produtosService";
 
 
 
-export async function getData(): Promise<Payment[]> {
+export async function getData(): Promise<ProductType[]> {
     const response = await axios.get("http://localhost:5193/produto/produtos");
-
     console.log(response)
-
     return response.data
-
-
 }
 
 export default async function DemoPage() {
 
-  const data = await getData()
-  console.log("columns", columns)
-  console.log("data", data)
-
   return (
-    <div className="container mx-auto py-10">
-      <DataTable columns={columns} dado={data} />
-    </div>
+    <ProdutosProvider >
+      <div className="flex flex-col gap-5 mt-10 mx-32">
+        <div className="flex justify-end">
+          <CadastrarProduto/>
+        </div>
+        <div>
+          <DataTable />
+        </div>
+      </div>
+    </ProdutosProvider>
   )
 }

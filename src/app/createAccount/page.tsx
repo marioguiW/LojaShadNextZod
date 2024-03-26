@@ -105,6 +105,8 @@ export default function SelectForm() {
             Cidade: data.cidade
         },
       })
+
+      console.log("foi")
     }catch(error : any){
       console.log(error.response.status)
       setErroAuth(error.response.status)

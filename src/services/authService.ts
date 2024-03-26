@@ -96,11 +96,11 @@ export const authService = {
                 };
                 return body;
             } else {
-                const errorText = await response.text(); // Read the response as text
+                const errorText = await response.text();
                 const body = {
                     ok: response.ok,
                     status: response.status,
-                    error: errorText // Include the error text in the response
+                    error: errorText
                 };
                 return body;
             }

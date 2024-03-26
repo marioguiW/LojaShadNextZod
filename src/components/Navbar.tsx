@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 export default function Navbar() {
 
   return (
-    <header className="flex p-8 bg-rose-300">
+    <header className="flex p-8 bg-blue-800">
       <nav className="flex justify-between m-auto w-[80%]">
         <div className="text-white text-2xl">Logo</div>
         <div>

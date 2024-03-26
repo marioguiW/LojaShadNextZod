@@ -1,7 +1,6 @@
 "use client"
 
 import {
-    ColumnDef,
     flexRender,
     getCoreRowModel,
     useReactTable,
@@ -15,19 +14,24 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { useState } from "react"
+import { useContext, useEffect } from "react"
+import { ProdutosContext } from "@/context/ProdutosContext"
+import { columns } from "./columns"
+import { getProduct } from "@/services/produtosService"
 
-interface DataTableProps<TData, TValue> {
-    columns: ColumnDef<TData, TValue>[]
-    dado: TData[]
-}
+export function DataTable(){
 
-export function DataTable<TData, TValue>({
-    columns,
-    dado,
-}: DataTableProps<TData, TValue>) {
+    const {data, setData} = useContext(ProdutosContext);
 
-    const [data, setDados] = useState(dado)
+    useEffect(()=>{
+        (async ()=> {
+            const produtos = await getProduct()
+            setData(produtos);
+            console.log(data);
+        })()
+    },[])
+
+    console.log(data);
 
     const table = useReactTable({
         data,
