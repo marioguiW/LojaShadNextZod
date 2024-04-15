@@ -26,6 +26,7 @@ export function DataTable(){
     useEffect(()=>{
         (async ()=> {
             const produtos = await getProduct()
+            console.log("produtos aq",produtos)
             setData(produtos);
             console.log(data);
         })()

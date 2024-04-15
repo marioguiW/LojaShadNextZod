@@ -8,7 +8,7 @@ import { ProductType } from "@/services/produtosService";
 
 export async function getData(): Promise<ProductType[]> {
     const response = await axios.get("http://localhost:5193/produto/produtos");
-    console.log(response)
+    console.log("produtos", response)
     return response.data
 }
 

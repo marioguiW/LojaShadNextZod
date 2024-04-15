@@ -7,6 +7,7 @@ export type ProductType = {
     unidadeMedida: string,
     quantidade: number,
     preco: number,
+    urlImagem: any
 }
 
 export async function getProduct(): Promise<ProductType[]> {
@@ -21,9 +22,10 @@ export async function postProduct(dataProduct : ProductType) : Promise<ProductTy
         Preco: dataProduct.preco,
         Quantidade: dataProduct.quantidade,
         Titulo: dataProduct.titulo,
-        UnidadeMedida: dataProduct.unidadeMedida
+        UnidadeMedida: dataProduct.unidadeMedida,
+        UrlImagem: dataProduct.urlImagem
     })
-
+    console.log("post", post)
     return post.data;
 }
 
@@ -34,7 +36,8 @@ export async function putProduct(newDataProduct: ProductType) : Promise<ProductT
         preco: newDataProduct.preco,
         quantidade: newDataProduct.quantidade,
         titulo: newDataProduct.titulo,
-        unidadeMedida: newDataProduct.unidadeMedida
+        unidadeMedida: newDataProduct.unidadeMedida,
+        UrlImagem: newDataProduct.urlImagem
     })
 
     return put.data

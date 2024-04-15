@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -16,11 +15,11 @@ import {
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NumericFormat } from 'react-number-format';
-import axios from "axios"
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ProdutosContext } from "@/context/ProdutosContext";
 import { ProductType, postProduct, putProduct } from "@/services/produtosService";
-
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "@/firebase";
 
 
 const formSchema = z.object({
@@ -38,7 +37,8 @@ const formSchema = z.object({
     }),
     preco: z.string().min(1, {
         message: "Mínimo 9 digitos (XX) X XXXX-XXXX"
-    })
+    }),
+    file: z.any(),
 })
 
 type FormularioProps = {
@@ -50,42 +50,7 @@ type FormularioProps = {
 export default function FormularioProdutos({ setOpen, estilo, dataProduct }: FormularioProps) {
 
     const { data, setData } = useContext(ProdutosContext);
-
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-
-        const precoSemPrefixo = values.preco.replace('R$ ', '');
-        const precoNumerico = parseFloat(precoSemPrefixo.replace(/[^\d,.]/g, ''));
-
-        
-        const valuesMask : ProductType = {
-            id: dataProduct?.id,
-            titulo: values.titulo,
-            categoria: values.categoria,
-            unidadeMedida: values.unidadeMedida,
-            quantidade: parseInt(values.quantidade),
-            preco: precoNumerico
-        }
-        console.log(valuesMask)
-        if (estilo == "POST") {
-            const post = await postProduct(valuesMask)
-            setData((prevData: any) => [...prevData, post]);
-        } else {
-            const put = await putProduct(valuesMask)
-
-            setData((prevData: any[]) =>
-                prevData.map((item: any) => {
-                    if(item.id == dataProduct?.id){
-                        return put
-                    }else{
-                        return item
-                    }
-                })
-            );
-            console.log(data);
-        }
-        console.log("oxi")
-        setOpen && setOpen(false)
-    }
+    const [progress, setProgress] = useState(0)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -98,6 +63,66 @@ export default function FormularioProdutos({ setOpen, estilo, dataProduct }: For
         }
     })
 
+    const fileRef = form.register("file");
+
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        console.log("Values submit", values)
+        
+        const precoSemPrefixo = values.preco.replace('R$ ', '');
+        const precoNumerico = parseFloat(precoSemPrefixo.replace(/[^\d,.]/g, ''));
+
+        const file = values.file[0]
+
+        const storageRef = ref(storage, `images/${file.name}`)
+        const uploadTask = uploadBytesResumable(storageRef, file)
+
+        uploadTask.on(
+            "state_changed",
+            snapshot => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                setProgress(progress)
+            },
+            error => {
+                alert(error)
+            },
+            ()=> {
+                console.log("download")
+                getDownloadURL(uploadTask.snapshot.ref).then(async (imgUrl) => {
+                    const valuesMask: ProductType = {
+                        id: dataProduct?.id,
+                        titulo: values.titulo,
+                        categoria: values.categoria,
+                        unidadeMedida: values.unidadeMedida,
+                        quantidade: parseInt(values.quantidade),
+                        preco: precoNumerico,
+                        urlImagem: imgUrl
+                    }
+            
+                    console.log("valuesMask", valuesMask)
+                    
+                    if (estilo == "POST") {
+                        const post = await postProduct(valuesMask)
+                        setData((prevData: any) => [...prevData, post]);
+                    } else {
+                        const put = await putProduct(valuesMask)
+            
+                        setData((prevData: any[]) =>
+                            prevData.map((item: any) => {
+                                if (item.id == dataProduct?.id) {
+                                    return put
+                                } else {
+                                    return item
+                                }
+                            })
+                        );
+                        console.log(data);
+                    }
+                    console.log("oxi")
+                    setOpen && setOpen(false)
+                })
+            }
+        )
+    }
 
     return (
         <div className={`flex items-center  w-full ${estilo}`}>
@@ -188,6 +213,21 @@ export default function FormularioProdutos({ setOpen, estilo, dataProduct }: For
                                 <FormMessage className="text-[10px]" />
                             </FormItem>
                         )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="file"
+                        render={({ field }) => {
+                            return (
+                                <FormItem>
+                                    <FormLabel>File</FormLabel>
+                                    <FormControl>
+                                        <Input type="file" placeholder="shadcn" {...fileRef} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            );
+                        }}
                     />
                     <Button type="submit" className="w-full mt-10 bg-emerald-500 hover:bg-emerald-600">Submit</Button>
                 </form>

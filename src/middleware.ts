@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
 import { authService } from "./services/authService"
-import Cookies from 'js-cookie'
 
 
 export default async function middleware(request : NextRequest){
@@ -46,7 +45,10 @@ export default async function middleware(request : NextRequest){
             return response
 
         }else{
-            console.log("refresh[ERRO]", refresh)
+            request.cookies.delete('ACCESS_TOKEN')
+            request.cookies.delete('REFRESH_TOKEN')
+            console.log(request.cookies.get('ACCESS_TOKEN'))
+            console.log(request.cookies.get('REFRESH_TOKEN'))
         }
     }
 

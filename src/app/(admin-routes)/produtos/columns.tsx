@@ -17,6 +17,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, Di
 import FormularioProdutos from "@/components/FormularioProdutos"
 import { ProductType, deleteProduct } from "@/services/produtosService"
 import DeletarProdutos from "@/components/DeletarProdutor"
+import Image from "next/image"
 
 export const columns: ColumnDef<ProductType>[] = [
     {
@@ -25,6 +26,15 @@ export const columns: ColumnDef<ProductType>[] = [
         cell: ({ row }) => {
             const amount: ReactNode = row.getValue("id")
             return <div className="text-center font-medium">{amount}</div>
+        },
+    },
+    {
+        accessorKey: "urlImagem",
+        header: () => <div className="text-center">Imagem</div>,
+        cell: ({ row }) => {
+            const amount: string = row.getValue("urlImagem")
+            console.log(amount)
+            return <div className="flex justify-center">{<img alt="Logo Produto" width={25} height={15} src={amount}/>}</div>
         },
     },
     {
@@ -79,7 +89,6 @@ export const columns: ColumnDef<ProductType>[] = [
             const [editOpen, setEditOpen] = useState(false)
             const [deleteOpen, setDeleteOpen] = useState(false)
             const [payment, setPayment] = useState(row.original)
-            console.log(editOpen)
 
             return (
                 <DropdownMenu>
